@@ -268,12 +268,26 @@ Host: 10.222.9.113
 
 ###############################################################
 
+# search/match in IAS_MAIN_LIFECYCLE, IAS_MAIN_LIFECYCLE_ARCHIVE
+
 title = "The_Big_Bang_Theory_S09E09_S09E09_CTHD9232010000000002_METADATA_v1_0.xml"
 
 life = SharedState.find_all_by_aggregate_type("IAS_MAIN_LIFECYCLE", :order=>["updated_at desc"])
 
 resl = life.select{ |e|
   e.data[:adi].split('/')[-1] == title
+}
+
+life = SharedState.find_all_by_aggregate_type("IAS_MAIN_LIFECYCLE", :order=>["updated_at desc"])
+
+resl = life.select{ |e|
+  e.data[:adi].split('/')[-1].include? title
+}
+
+complete = SharedState.find_all_by_aggregate_type("IAS_MAIN_LIFECYCLE_ARCHIVE", :order=>["updated_at desc"])
+
+resl = complete.select{ |e|
+  e.data[:adi].split('/')[-1].include? title
 }
 
 complete = SharedState.find_all_by_aggregate_type("IAS_MAIN_LIFECYCLE_ARCHIVE", :order=>["updated_at desc"]).map{|a|
@@ -285,7 +299,6 @@ complete = SharedState.find_all_by_aggregate_type("IAS_MAIN_LIFECYCLE_ARCHIVE", 
 res = complete.select{ |e|
   e["adi"].split('/')[-1] == title
 }
-
 
 resl.each { |e| e.destroy }
 
