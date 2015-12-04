@@ -1,4 +1,19 @@
-------------------------------------------------------
+##################################################################################
+# Change specific SharedState table field
+##################################################################################
+ss = SharedState.find_all_by_aggregate_type("Rights_Rights_List")
+ss.each { |e|
+  e.data[:NGVTrickplay][2]["value"] = "Pause"
+  e.save
+}
+
+ss = SharedState.find_all_by_aggregate_type("Offers_Offers_List")
+ss.each { |e|
+  e.data[:NGVTrickplay][2]["value"] = "Pause" if !e.data[:NGVTrickplay].nil?
+  e.save
+}
+
+##################################################################################
 
 life = SharedState.find_all_by_aggregate_type("IAS_MAIN_LIFECYCLE", :order=>["updated_at desc"]).map{|a| 
   {
