@@ -1,3 +1,25 @@
+###########################################################################################
+# find all the complete workorders's offer id which is returned 'true' in "Skip expired" 
+# step and "IAS BO Process Each Update" workflow(workflow_id = 228).
+###########################################################################################
+
+wo228 = WorkOrder.find(:all, :conditions=>"status = 'Complete' AND workflow_id = 228")
+
+result = []
+
+wo228.each { |a|
+  step_id = WorkStep.find_all_by_workOrder_id(a[:id]).select{|e| e[:workStepName] == "Skip expired"}[0][:id]
+  filter_result_var_id = WorkOutput.find_all_by_workStep_id(step_id).select{|e| e[:name] == "FilterResult"}[0][:variable_id]
+
+  if Variable.find(filter_result_var_id)[:value_flag] == true  
+    wo_inputs = WorkInput.find_all_by_workOrder_id(a[:id])
+    offer_var_id = wo_inputs.select{|e| e["name"] == "add_to_url"}.map{|e| {"variable_id"=>e.variable_id}}[0]["variable_id"]
+    offer_val = Variable.find(offer_var_id)[:value_string]
+    result << { "offer_id"=> offer_val, "filter result"=> true } if Variable.find(filter_result_var_id)[:value_flag] == true
+  end
+}
+
+
 ##################################################################################
 # Change specific SharedState table field
 ##################################################################################
