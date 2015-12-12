@@ -1,4 +1,17 @@
 ###########################################################################################
+# insert item into a queue
+###########################################################################################
+queue_name="Image_Queue"
+
+image_name = "La_famille_Berenstain_E07_E07_DDDE0000005158541306_POSTER_v1_0.jpg"
+image_path = "/mnt/mvl/Register/aspera/byDeluxeAuto/#{image_name}"
+
+ 
+ManagedQueue.queue(queue_name, image_name, image_path)
+ManagedQueue.find_by_name_and_queued_item(queue_name, image_name.to_yaml)
+
+
+###########################################################################################
 # find all the complete workorders's offer id which is returned 'true' in "Skip expired" 
 # step and "IAS BO Process Each Update" workflow(workflow_id = 228).
 ###########################################################################################
