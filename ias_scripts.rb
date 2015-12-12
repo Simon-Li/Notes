@@ -1,4 +1,17 @@
 ###########################################################################################
+# To invoke a workorder by http request
+###########################################################################################
+
+GET http://<IP>/aspera/orchestrator/work_orders/createBasic/0?work_order[workflow_id]=250&work_order[priority]=2&work_order[name]=hello world&external_parameters[adi_fn]=ffffffffffffffffffffffffffffffffffffffffffffff&commit=Start
+
+Param fields:
+work_order[workflow_id]
+work_order[priority]
+work_order[name]
+external_parameters[adi_fn]
+commit
+
+###########################################################################################
 # insert item into a queue
 ###########################################################################################
 queue_name="Image_Queue"
