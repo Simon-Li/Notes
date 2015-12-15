@@ -1,3 +1,12 @@
+def get_mw_endpoint
+  ret = SharedState.find_all_by_aggregate_type("Config_Hosts_List").select{|d| d if d.data[:IAS_Service_Name] == "mw"}
+  host = ret[0].data[:FQDN]
+  service_url = ret[0].data[:IAS_Service_Endpoint]
+  t = "http://#{host}#{service_url}"
+  log "obtain mw_endpoint #{t}"
+  @op_params['mw_endpoint'] = t
+end
+
 ###########################################################################################
 # To invoke a workorder by http request
 ###########################################################################################
