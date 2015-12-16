@@ -1,10 +1,32 @@
+##################################################################################################################
+# Filter out media guids from mrss_freezing table
+##################################################################################################################
+result = []
+ss = SharedState.find_all_by_aggregate_type_and_aggregate_id('mrss_freezing', 0)
+ss.each { |e| 
+  result << { 
+    'title' => e.data['mrss_data_from_adi']['TitleBrief'], 
+    'guid1' => e.data['media_guids'][0],
+    'guid2' => e.data['media_guids'][1],
+  }
+}
+
+# IF dump out for importing to Excel
+ss = SharedState.find_all_by_aggregate_type_and_aggregate_id('mrss_freezing', 0)
+ss.each { |e| 
+  puts "title = #{e.data['mrss_data_from_adi']['TitleBrief']} = guid1 = #{e.data['media_guids'][0]} = guid2 = #{e.data['media_guids'][1]}"
+}
+
+##################################################################################################################
+# get mw_endpoint
+##################################################################################################################
 def get_mw_endpoint
   ret = SharedState.find_all_by_aggregate_type("Config_Hosts_List").select{|d| d if d.data[:IAS_Service_Name] == "mw"}
   host = ret[0].data[:FQDN]
   service_url = ret[0].data[:IAS_Service_Endpoint]
   t = "http://#{host}#{service_url}"
   log "obtain mw_endpoint #{t}"
-  @op_params['mw_endpoint'] = t
+  return t
 end
 
 ###########################################################################################
