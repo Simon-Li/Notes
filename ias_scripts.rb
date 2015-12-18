@@ -1,4 +1,27 @@
 ##################################################################################################################
+# Found any missing items between guid.txt and ESI-XCO table
+##################################################################################################################
+
+guids = []
+f = File.open("/home/sli/guid.txt", "r")
+f.each_line do |line|
+  guids << line.split("\r")[0]
+end
+
+ss = SharedState.find_all_by_aggregate_type("ESI-XCO")
+
+found = []
+miss = []
+guids.each { |g|
+  ss.each { |e| 
+    next if e.data["ReferenceId"] != g
+    found << g
+    break
+  }
+}
+miss = guids - found
+
+##################################################################################################################
 # Filter out media guids from mrss_freezing table
 ##################################################################################################################
 result = []
