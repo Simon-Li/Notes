@@ -1,4 +1,24 @@
 ##################################################################################################################
+# check if a title is in the lifecycle and freezing table, then able to do clean-ups
+##################################################################################################################
+
+title = "Super_Wings_E08_S01E08"
+
+life = SharedState.find_all_by_aggregate_type("IAS_MAIN_LIFECYCLE")
+resl = life.select{ |e|
+  e.data[:adi].split('/')[-1].include? title
+}
+
+
+freezing = SharedState.find_all_by_aggregate_type("ADI_MAIN_FREEZING")
+
+resl = freezing.select{ |e|
+  e.data['xml'].split('/')[-1].include? title
+}
+
+# .destroy
+
+##################################################################################################################
 # Found any missing items between guid.txt and ESI-XCO table
 ##################################################################################################################
 
