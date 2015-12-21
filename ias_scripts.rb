@@ -1,4 +1,27 @@
 ##################################################################################################################
+# find out worksteps by workflow id, workstep name and workstep status,
+# and execute "workstep restart" from a specific step
+##################################################################################################################
+
+completed = []
+
+error_wos=WorkStep.find_all_by_workflow_id_and_workStepName_and_status(183, "DCenter Lite", "Error")
+error_wos.each { |e|
+  done = nil
+  if not completed.include? e.id
+    done = WorkOrder.restart_from(e.id,"15") if e.statusDetails.include? "unexpected break"
+  end
+  next if done == nil
+  completed << e.id
+}
+
+# Outputs: all error wo restarted successfully
+?> completed.size
+=> 515
+>> error_wos.size
+=> 539
+
+##################################################################################################################
 # check if a title is in the lifecycle and freezing table, then able to do clean-ups
 ##################################################################################################################
 
