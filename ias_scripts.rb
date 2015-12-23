@@ -1,4 +1,27 @@
 ##################################################################################################################
+# fix disordered sub workorders in a fan-out, which is a prerequisite to restart a failed sub workorder for 
+# fan-out scenario
+##################################################################################################################
+
+def adjust_times(sub, fun)
+  puts "orig sub ac time - #{WorkStep.find(sub).activation_time}"
+  fun_time = WorkStep.find(fun).activation_time
+  puts "orig fun ac time - #{fun_time}"
+  sub_wf = WorkStep.find(sub)
+  sub_wf.activation_time = fun_time - 5
+  return sub_wf
+end
+
+# Change the following two var
+sub_id = 98087136
+fun_id = 98087148
+
+obj = adjust_times(sub_id, fun_id)
+obj.save
+puts "changed act time for #{WorkOrder.find(obj.workOrder_id).name}"
+
+
+##################################################################################################################
 # find out worksteps by workflow id, workstep name and workstep status,
 # and execute "workstep restart" from a specific step
 ##################################################################################################################
