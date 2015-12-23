@@ -139,10 +139,14 @@ queue_name="Image_Queue"
 image_name = "La_famille_Berenstain_E07_E07_DDDE0000005158541306_POSTER_v1_0.jpg"
 image_path = "/mnt/mvl/Register/aspera/byDeluxeAuto/#{image_name}"
 
- 
 ManagedQueue.queue(queue_name, image_name, image_path)
 ManagedQueue.find_by_name_and_queued_item(queue_name, image_name.to_yaml)
 
+# for queue insertion in general
+queue_name="Video_Queue"
+item_name = "a1-778048-s1-7412923-v1-514.ts"
+item_path = "/mnt/MediaCage/MediaCage1/GLOB0054731550000100_2/#{item_name}"
+ManagedQueue.queue(queue_name, item_name, item_path)
 
 ###########################################################################################
 # find all the complete workorders's offer id which is returned 'true' in "Skip expired" 
