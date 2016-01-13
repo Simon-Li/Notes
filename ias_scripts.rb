@@ -1,4 +1,22 @@
 ##################################################################################################################
+# delete entries in ADI_MAIN_FREEZING and IAS_MAIN_LIFECYCLE
+##################################################################################################################
+
+title = "Défis_extrêmes_Labsurdicourse_E02_S01E02"
+
+freezing = SharedState.find_all_by_aggregate_type("ADI_MAIN_FREEZING")
+fr_ret = freezing.select{ |e|
+  e.data['xml'].split('/')[-1].include? title
+}
+fr_ret[0].destroy if fr_ret.size == 1
+
+life = SharedState.find_all_by_aggregate_type("IAS_MAIN_LIFECYCLE")
+lc_ret = life.select{ |e|
+  e.data[:adi].split('/')[-1].include? title
+}
+lc_ret[0].destroy if lc_ret.size == 1
+
+##################################################################################################################
 # delete items from queue
 ##################################################################################################################
 ret = ManagedQueue.find_item("Video_Queue", "a1-833996-s1-7823474-v1-529.ts")
