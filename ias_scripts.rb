@@ -1,4 +1,32 @@
 ##################################################################################################################
+# Add file items into queues by iterating the located folder
+##################################################################################################################
+mc_dir = "/mnt/MediaCage/MediaCage1/AFBB0210000001511011_2"
+
+Dir.foreach(mc_dir) { |x| 
+  if x.include? ".ts" or x.include? ".f4v"
+    queue_name="Video_Queue"
+    item_name = x
+    item_path = "#{mc_dir}/#{item_name}"
+    ManagedQueue.queue(queue_name, item_name, item_path)
+  end
+
+  if x.include? "_MANIFEST_"
+    queue_name="Manifest_Queue"
+    item_name = x
+    item_path = "#{mc_dir}/#{item_name}"
+    ManagedQueue.queue(queue_name, item_name, item_path)
+  end
+
+  if x.include? ".jpg"
+    queue_name="Image_Queue"
+    item_name = x
+    item_path = "#{mc_dir}/#{item_name}"
+    ManagedQueue.queue(queue_name, item_name, item_path)
+  end
+}
+
+##################################################################################################################
 # delete entries in ADI_MAIN_FREEZING and IAS_MAIN_LIFECYCLE
 ##################################################################################################################
 
