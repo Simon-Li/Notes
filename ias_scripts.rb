@@ -1,4 +1,28 @@
 ##################################################################################################################
+# dump table and its fields to a file
+##################################################################################################################
+dump_file = File.open('/home/sli/dump_file.txt', 'a')
+
+ss = SharedState.find_all_by_aggregate_type_and_aggregate_id('mrss_freezing', 0)
+ss.each { |e| 
+  xml_hash = XmlSimple.xml_in(ss[0].data['publish_offers'][0])
+
+  title = e.data['mrss_data_from_adi']['TitleBrief']
+  guid1 = e.data['media_guids'][0]
+  guid2 = e.data['media_guids'][1]
+  asset_id = xml_hash['Metadata'][0]['AMS'][0]['Asset_ID']
+
+  lic_end_time = nil
+  app_data = xml_hash['Asset'][0]['Metadata'][0]['App_Data']
+  app_data.each { |x|
+    lic_end_time = x['Value'] if x['Name'] == 'Licensing_Window_End'
+  }
+
+  row = "title = #{title} = guid1 = #{guid1} = guid2 = #{guid2} = assetid = #{asset_id} = lic_end = #{lic_end_time}"
+  dump_file.puts row
+}
+
+##################################################################################################################
 # Add file items into queues by iterating the located folder
 ##################################################################################################################
 mc_dir = "/mnt/MediaCage/MediaCage1/AFBB0210000001511011_2"
