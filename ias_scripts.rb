@@ -1,4 +1,70 @@
 ##################################################################################################################
+# step-by-step title clean up for the SharedState
+##################################################################################################################
+
+# 1. clean freezing
+
+title = "AwesomenessTV_S01E13_S01E13"
+
+freezing = SharedState.find_all_by_aggregate_type("ADI_MAIN_FREEZING")
+fr_ret = freezing.select{ |e|
+  e.data['xml'].split('/')[-1].include? title
+}
+fr_ret.each {|x|
+  x.destroy
+}
+
+# 2. clean lifecycle
+
+life = SharedState.find_all_by_aggregate_type("IAS_MAIN_LIFECYCLE")
+lc_ret = life.select{ |e|
+  e.data[:adi].split('/')[-1].include? title
+}
+lc_ret.each {|x|
+  x.destroy
+}
+
+# 3. clean queue
+
+mc_dir = "/mnt/MediaCage/MediaCage1/CPHD9586520000000001_1"
+
+Dir.foreach(mc_dir) {|x|
+  if x.include? ".ts" or x.include? ".f4v"
+    ret = ManagedQueue.find_item("Video_Queue", x)
+    puts x
+    ret.destroy if ret != nil
+  end
+}
+Dir.foreach(mc_dir) {|x|
+  if x.include? "_MANIFEST_" and x.include? ".xml"
+    ret = ManagedQueue.find_item("Manifest_Queue", x)
+    ret.destroy if ret != nil
+  end
+}
+Dir.foreach(mc_dir) {|x|
+  if x.include? ".jpg"
+    puts x
+    ret = ManagedQueue.find_item("Image_Queue", x)
+    ret.destroy if ret != nil
+
+    # 4. clean jpg in SS
+    ret = SharedState.find_by_name_and_aggregate_type(x, x)
+    ret.destroy if ret != nil
+  end
+}
+# 5. clean tar in SS
+Dir.foreach(mc_dir) {|x|
+  if x.include? ".tar"
+    puts x
+    ret = SharedState.find_by_name_and_aggregate_type(x, x)
+    ret.destroy if ret != nil
+  end
+}
+
+# 6. clean MC files
+
+
+##################################################################################################################
 # dump table and its fields to a file
 ##################################################################################################################
 dump_file = File.open('/home/sli/dump_file.txt', 'a')
