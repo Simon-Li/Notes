@@ -63,9 +63,30 @@ Dir.foreach(mc_dir) {|x|
 
 # 6. clean MC files
 
+##################################################################################################################
+# dump table and its fields to a file (SideLoader version)
+##################################################################################################################
+dump_file = File.open('/home/sli/dump_file.txt', 'a')
+
+ss = SharedState.find_all_by_aggregate_type_and_aggregate_id('mrss_freezing', 0)
+ss.each { |e| 
+  xml_hash = XmlSimple.xml_in(e.data['publish_offers'][0])
+
+  title = e.data['mrss_data_from_adi']['TitleBrief']
+  guid1 = e.data['media_guids'][0]
+  guid2 = e.data['media_guids'][1]
+
+  publishedOfferURIId = xml_hash['publishedOfferURIId'][0].split('/').last
+ 
+  xml_hash = e.data['adi3_metadata_hash']
+  endDateTime = xml_hash['Asset'][0]['endDateTime']
+
+  row = "title = #{title} = guid1 = #{guid1} = guid2 = #{guid2} = publishedOfferURIId = #{publishedOfferURIId} = endDateTime = #{endDateTime}"
+  dump_file.puts row
+}
 
 ##################################################################################################################
-# dump table and its fields to a file
+# dump table and its fields to a file (Main version)
 ##################################################################################################################
 dump_file = File.open('/home/sli/dump_file.txt', 'a')
 
